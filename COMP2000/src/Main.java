@@ -71,5 +71,8 @@ public class Main {
         world.addEntity(new Food(250, 300, 45));
         world.addEntity(new Food(500, 600, 45));
         world.addEntity(new Food(850, 150, 45));
+
+        world.addEntity(new Military(500, 375));
+        world.addEntity(new Military(200, 620));
     }
 }
