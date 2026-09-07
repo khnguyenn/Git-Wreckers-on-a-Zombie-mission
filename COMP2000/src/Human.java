@@ -208,7 +208,7 @@ public class Human extends Entity {
         wanderTicksRemaining = 20 + random.nextInt(50);
     }
 
-    private void moveTowards(double targetX, double targetY, World world) {
+    protected void moveTowards(double targetX, double targetY, World world) {
         double xDifference = targetX - getX();
         double yDifference = targetY - getY();
         double distance = Math.hypot(xDifference, yDifference);
