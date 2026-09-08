@@ -95,6 +95,10 @@ public class SimPanel extends JPanel {
                 KeyStroke.getKeyStroke('+'),
                 "increase-speed"
         );
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("shift pressed EQUALS"),
+                "increase-speed"
+        );
         getActionMap().put("increase-speed", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent event) {
