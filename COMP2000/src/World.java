@@ -8,6 +8,7 @@ public class World {
 
     private static final int FOOD_SPAWN_INTERVAL_TICKS = 25;
     private static final int HUMAN_SPAWN_INTERVAL_TICKS = 100;
+    private static final int ZOMBIE_SPAWN_INTERVAL_TICKS = 180;
     private static final double FOOD_ENERGY_VALUE = 45.0;
 
     private final List<Entity> entities;
@@ -112,6 +113,11 @@ public class World {
 
         if (tick % HUMAN_SPAWN_INTERVAL_TICKS == 0) {
             addEntity(new Human(random.nextDouble() * width,
+                    random.nextDouble() * height));
+        }
+
+        if (tick > 0 && tick % ZOMBIE_SPAWN_INTERVAL_TICKS == 0) {
+            addEntity(new Zombie(random.nextDouble() * width,
                     random.nextDouble() * height));
         }
     }
