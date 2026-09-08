@@ -33,6 +33,7 @@ public class SimPanel extends JPanel {
         setPreferredSize(
                 new Dimension(world.getWidth(), world.getHeight())
         );
+        setLayout(null);
 
         URL backgroundURL =
                 SimPanel.class.getResource("/Background.png");
@@ -95,8 +96,7 @@ public class SimPanel extends JPanel {
         getActionMap().put("increase-speed", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent event) {
-                speedLevel = Math.min(MAX_SPEED_LEVEL, speedLevel + 1);
-                repaint();
+                increaseSpeed();
             }
         });
 
@@ -111,10 +111,33 @@ public class SimPanel extends JPanel {
         getActionMap().put("decrease-speed", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent event) {
-                speedLevel = Math.max(MIN_SPEED_LEVEL, speedLevel - 1);
-                repaint();
+                decreaseSpeed();
             }
         });
+
+        JButton slowerButton = new JButton("Slower");
+        slowerButton.setToolTipText("Decrease simulation speed");
+        slowerButton.setFocusable(false);
+        slowerButton.setBounds(15, 140, 90, 28);
+        slowerButton.addActionListener(event -> decreaseSpeed());
+        add(slowerButton);
+
+        JButton fasterButton = new JButton("Faster");
+        fasterButton.setToolTipText("Increase simulation speed");
+        fasterButton.setFocusable(false);
+        fasterButton.setBounds(115, 140, 90, 28);
+        fasterButton.addActionListener(event -> increaseSpeed());
+        add(fasterButton);
+    }
+
+    private void increaseSpeed() {
+        speedLevel = Math.min(MAX_SPEED_LEVEL, speedLevel + 1);
+        repaint();
+    }
+
+    private void decreaseSpeed() {
+        speedLevel = Math.max(MIN_SPEED_LEVEL, speedLevel - 1);
+        repaint();
     }
 
     public boolean isRunning() {
