@@ -91,6 +91,10 @@ public class SimPanel extends JPanel {
                 KeyStroke.getKeyStroke("pressed ADD"),
                 "increase-speed"
         );
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('+'),
+                "increase-speed"
+        );
         getActionMap().put("increase-speed", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent event) {
@@ -104,6 +108,10 @@ public class SimPanel extends JPanel {
         );
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("pressed SUBTRACT"),
+                "decrease-speed"
+        );
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('-'),
                 "decrease-speed"
         );
         getActionMap().put("decrease-speed", new AbstractAction() {
