@@ -1,5 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
@@ -218,14 +220,37 @@ public class Zombie extends Entity {
         }
 
         if (!sourceAsset.isFile()) {
-            throw new IllegalStateException(
-                    imagePath + " was not found"
-            );
+            return createFallbackSprite();
         }
 
         return new ImageIcon(
                 sourceAsset.getAbsolutePath()
         ).getImage();
+    }
+
+    /** Keeps the simulation runnable when optional Zombie artwork is absent. */
+    private Image createFallbackSprite() {
+        BufferedImage sprite = new BufferedImage(
+                CHARACTER_WIDTH,
+                CHARACTER_HEIGHT,
+                BufferedImage.TYPE_INT_ARGB
+        );
+        Graphics2D graphics = sprite.createGraphics();
+        try {
+            graphics.setColor(new Color(70, 120, 80));
+            graphics.fillOval(8, 2, 22, 22);
+            graphics.fillRoundRect(7, 20, 24, 30, 8, 8);
+            graphics.setColor(Color.WHITE);
+            graphics.fillOval(13, 10, 5, 5);
+            graphics.fillOval(21, 10, 5, 5);
+            graphics.setColor(new Color(30, 30, 30));
+            graphics.fillOval(15, 12, 2, 2);
+            graphics.fillOval(23, 12, 2, 2);
+            graphics.drawLine(14, 19, 24, 19);
+        } finally {
+            graphics.dispose();
+        }
+        return sprite;
     }
 
     private void advanceWalkAnimation() {

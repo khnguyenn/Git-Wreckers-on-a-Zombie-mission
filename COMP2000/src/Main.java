@@ -74,5 +74,7 @@ public class Main {
 
         world.addEntity(new Military(500, 375));
         world.addEntity(new Military(200, 620));
+        world.addEntity(new Zombie(650, 250));
+        world.addEntity(new Zombie(350, 500));
     }
 }
