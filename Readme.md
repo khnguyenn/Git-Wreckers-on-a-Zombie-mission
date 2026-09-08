@@ -33,7 +33,7 @@ Use the agreed division:
 | World/Main | Tick loop, spawning, and neighbour queries | Tran Khoi Nguyen (Kian) Nguyen| 48769266 |
 | Human/Food | Energy, starvation, fleeing, and shelter | | |
 | Zombie | Infection, chasing, and target selection | | |
-| Military/MovementBehaviour | Patrol, shooting, and strategy pattern | | |
+| Military/MovementBehaviour | Patrol, shooting, and strategy pattern | Neev Patel | 48521558 |
 | Building/SimPanel | Occupancy, rendering, and statistics | | |
 
 ## Rules 
