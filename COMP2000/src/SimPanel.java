@@ -115,17 +115,19 @@ public class SimPanel extends JPanel {
             }
         });
 
-        JButton slowerButton = new JButton("Slower");
+        JButton slowerButton = new JButton("−");
         slowerButton.setToolTipText("Decrease simulation speed");
         slowerButton.setFocusable(false);
-        slowerButton.setBounds(15, 140, 90, 28);
+        slowerButton.setFont(new Font("SansSerif", Font.BOLD, 18));
+        slowerButton.setBounds(15, 140, 44, 32);
         slowerButton.addActionListener(event -> decreaseSpeed());
         add(slowerButton);
 
-        JButton fasterButton = new JButton("Faster");
+        JButton fasterButton = new JButton("+");
         fasterButton.setToolTipText("Increase simulation speed");
         fasterButton.setFocusable(false);
-        fasterButton.setBounds(115, 140, 90, 28);
+        fasterButton.setFont(new Font("SansSerif", Font.BOLD, 18));
+        fasterButton.setBounds(65, 140, 44, 32);
         fasterButton.addActionListener(event -> increaseSpeed());
         add(fasterButton);
     }
