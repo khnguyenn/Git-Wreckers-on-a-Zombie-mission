@@ -51,10 +51,9 @@ Use the agreed division:
 ### How to run
 1. Clone this project and move to this project
 ```bash
-git clone https://github.com/ShahriarHasan001533/Git-Wreckers-on-a-Zombie-mission
+git clone https://github.com/khnguyenn/Git-Wreckers-on-a-Zombie-mission
 
 cd Git-Wreckers-on-a-Zombie-mission
-cd COMP2000
 ```
 2. Compile the Java source files.
 ```bash
