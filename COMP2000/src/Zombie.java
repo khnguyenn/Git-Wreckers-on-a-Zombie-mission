@@ -40,16 +40,13 @@ public class Zombie extends Entity {
         super(x, y);
 
         frontWalkFrames = new Image[]{
-                loadImage("/ZombieFrontWalk1.png"),
                 loadImage("/ZombieFrontWalk2.png"),
-                loadImage("/ZombieFrontWalk3.png"),
-                loadImage("/ZombieFrontWalk4.png")
+                loadImage("/ZombieFrontWalk3.png")
         };
 
         sideWalkFrames = new Image[]{
                 loadImage("/ZombieWalk1.png"),
-                loadImage("/ZombieWalk2.png"),
-                loadImage("/ZombieWalk3.png")
+                loadImage("/ZombieWalk2.png")
         };
 
         frontIdleFrame = loadImage("/ZombieFrontIdle.png");
