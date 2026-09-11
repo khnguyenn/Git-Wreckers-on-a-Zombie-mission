@@ -60,19 +60,19 @@ public class Military extends Human {
         this.currentBehaviour = patrolBehaviour;
 
         frontWalkFrames = new Image[]{
-                loadImage("/MilitaryFrontWalk1.png"),
-                loadImage("/MilitaryFrontWalk2.png"),
-                loadImage("/MilitaryFrontWalk3.png"),
-                loadImage("/MilitaryFrontWalk4.png")
+                loadImage("/assets/MilitaryFrontWalk1.png"),
+                loadImage("/assets/MilitaryFrontWalk2.png"),
+                loadImage("/assets/MilitaryFrontWalk3.png"),
+                loadImage("/assets/MilitaryFrontWalk4.png")
         };
         sideWalkFrames = new Image[]{
-                loadImage("/MilitaryWalk1.png"),
-                loadImage("/MilitaryWalk2.png"),
-                loadImage("/MilitaryWalk3.png")
+                loadImage("/assets/MilitaryWalk1.png"),
+                loadImage("/assets/MilitaryWalk2.png"),
+                loadImage("/assets/MilitaryWalk3.png")
         };
-        frontIdleFrame = loadImage("/MilitaryFrontIdle.png");
-        sideIdleFrame = loadImage("/MilitarySideIdle.png");
-        backFrame = loadImage("/MilitaryBack.png");
+        frontIdleFrame = loadImage("/assets/MilitaryFrontIdle.png");
+        sideIdleFrame = loadImage("/assets/MilitarySideIdle.png");
+        backFrame = loadImage("/assets/MilitaryBack.png");
     }
 
     /** Creates a unit that patrols a default box around its spawn point. */
@@ -277,9 +277,9 @@ public class Military extends Human {
         // When Java is run with only the generated out directory on its
         // classpath, image assets remain in src rather than being duplicated.
         String fileName = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
-        File sourceAsset = new File("src", fileName);
+        File sourceAsset = new File("src/assets", fileName);
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src", fileName);
+            sourceAsset = new File("COMP2000/src/assets", fileName);
         }
         if (!sourceAsset.isFile()) {
             throw new IllegalStateException(imagePath + " was not found");

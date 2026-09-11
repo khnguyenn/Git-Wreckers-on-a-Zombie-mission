@@ -40,18 +40,18 @@ public class Zombie extends Entity {
         super(x, y);
 
         frontWalkFrames = new Image[]{
-                loadImage("/ZombieFrontWalk2.png"),
-                loadImage("/ZombieFrontWalk3.png")
+                loadImage("/assets/ZombieFrontWalk2.png"),
+                loadImage("/assets/ZombieFrontWalk3.png")
         };
 
         sideWalkFrames = new Image[]{
-                loadImage("/ZombieWalk1.png"),
-                loadImage("/ZombieWalk2.png")
+                loadImage("/assets/ZombieWalk1.png"),
+                loadImage("/assets/ZombieWalk2.png")
         };
 
-        frontIdleFrame = loadImage("/ZombieFrontIdle.png");
-        sideIdleFrame = loadImage("/ZombieSideIdle.png");
-        backFrame = loadImage("/ZombieBack.png");
+        frontIdleFrame = loadImage("/assets/ZombieFrontIdle.png");
+        sideIdleFrame = loadImage("/assets/ZombieSideIdle.png");
+        backFrame = loadImage("/assets/ZombieBack.png");
         walkFrame = 0;
         chooseNewWanderDirection();
     }
@@ -208,10 +208,10 @@ public class Zombie extends Entity {
                 ? imagePath.substring(1)
                 : imagePath;
 
-        File sourceAsset = new File("src", fileName);
+        File sourceAsset = new File("src/assets", fileName);
 
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src", fileName);
+            sourceAsset = new File("COMP2000/src/assets", fileName);
         }
 
         if (!sourceAsset.isFile()) {

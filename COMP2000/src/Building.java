@@ -28,7 +28,7 @@ public class Building extends Entity {
 
                 Image loadedImage;
                 try {
-                    URL imageURL = Building.class.getResource("/Building.png");
+                    URL imageURL = Building.class.getResource("/assets/Building.png");
                     if (imageURL == null) {
                         throw new IOException("Building.png could not be found");
                     }

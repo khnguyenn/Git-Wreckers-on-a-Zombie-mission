@@ -45,19 +45,19 @@ public class Human extends Entity {
         super(x, y);
         energy = MAX_ENERGY;
         frontWalkFrames = new Image[]{
-                loadImage("/HumanFrontWalk1.png"),
-                loadImage("/HumanFrontWalk2.png"),
-                loadImage("/HumanFrontWalk3.png"),
-                loadImage("/HumanFrontWalk4.png")
+                loadImage("/assets/HumanFrontWalk1.png"),
+                loadImage("/assets/HumanFrontWalk2.png"),
+                loadImage("/assets/HumanFrontWalk3.png"),
+                loadImage("/assets/HumanFrontWalk4.png")
         };
         sideWalkFrames = new Image[]{
-                loadImage("/HumanWalk1.png"),
-                loadImage("/HumanWalk2.png"),
-                loadImage("/HumanWalk3.png")
+                loadImage("/assets/HumanWalk1.png"),
+                loadImage("/assets/HumanWalk2.png"),
+                loadImage("/assets/HumanWalk3.png")
         };
-        frontIdleFrame = loadImage("/HumanFrontIdle.png");
-        sideIdleFrame = loadImage("/HumanSideIdle.png");
-        backFrame = loadImage("/HumanBack.png");
+        frontIdleFrame = loadImage("/assets/HumanFrontIdle.png");
+        sideIdleFrame = loadImage("/assets/HumanSideIdle.png");
+        backFrame = loadImage("/assets/HumanBack.png");
         walkFrame = 0;
         chooseNewWanderDirection();
     }
@@ -246,9 +246,9 @@ public class Human extends Entity {
         // When Java is run with only the generated out directory on its
         // classpath, image assets remain in src rather than being duplicated.
         String fileName = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
-        File sourceAsset = new File("src", fileName);
+        File sourceAsset = new File("src/assets", fileName);
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src", fileName);
+            sourceAsset = new File("COMP2000/src/assets", fileName);
         }
         if (!sourceAsset.isFile()) {
             throw new IllegalStateException(imagePath + " was not found");
