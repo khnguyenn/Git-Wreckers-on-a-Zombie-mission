@@ -1,7 +1,0 @@
-{
-    "java.debug.settings.onBuildFailureProceed": true,
-    "java.project.sourcePaths": [
-        "COMP2000/src"
-    ],
-    "java.project.outputPath": "COMP2000/out"
-}
