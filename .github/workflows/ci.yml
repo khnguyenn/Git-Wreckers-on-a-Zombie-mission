@@ -22,7 +22,6 @@ jobs:
           java-version: "17"
 
       - name: Compile Java project
-        working-directory: COMP2000
         run: |
           mkdir -p out
           javac -d out src/*.java
