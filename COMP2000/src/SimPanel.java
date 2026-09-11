@@ -34,7 +34,7 @@ public class SimPanel extends JPanel {
                 new Dimension(world.getWidth(), world.getHeight())
         );
         URL backgroundURL =
-                SimPanel.class.getResource("/Background.png");
+                SimPanel.class.getResource("/assets/Background.png");
 
         if (backgroundURL == null) {
             throw new IllegalStateException(
