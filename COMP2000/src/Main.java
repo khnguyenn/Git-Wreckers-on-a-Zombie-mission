@@ -132,8 +132,8 @@ public class Main {
         // Part B: people wander until they find and consume nearby food.
         for (int index = 0; index < settings.getHumanCount(); index++) {
             world.addEntity(new Human(
-                    getSpawnCoordinate(index, 137, world.getWidth()),
-                    getSpawnCoordinate(index, 83, world.getHeight())
+                    getRandomSpawnCoordinate(world.getWidth()),
+                    getRandomSpawnCoordinate(world.getHeight())
             ));
         }
 
@@ -150,18 +150,10 @@ public class Main {
 
         for (int index = 0; index < settings.getZombieCount(); index++) {
             world.addEntity(new Zombie(
-                    getSpawnCoordinate(index, 173, world.getWidth()),
-                    getSpawnCoordinate(index, 149, world.getHeight())
+                    getRandomSpawnCoordinate(world.getWidth()),
+                    getRandomSpawnCoordinate(world.getHeight())
             ));
         }
-    }
-
-    private static double getSpawnCoordinate(
-            int index,
-            int step,
-            int dimension
-    ) {
-        return 80 + (index * step) % (dimension - 160);
     }
 
     private static double getRandomSpawnCoordinate(int dimension) {
