@@ -108,8 +108,7 @@ public class Zombie extends Entity {
 
     /**
      * Infects a single human on contact. The victim is
-     * deactivated and the World spawns a new zombie at that
-     * position.
+     * deactivated. No replacement zombie is created by this method.
      */
     public void infect(Human human) {
         if (human != null

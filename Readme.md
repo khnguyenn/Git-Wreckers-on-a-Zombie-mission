@@ -1,14 +1,14 @@
 # Git Wreckers : Zombie Mission Simulation  
 
 ## Overview
-What happens when a group of zombie infection spreads through a living community? Git Wreckers explores this through a 2D zombie outbreak simulation developed in Java, where humans search for food,shelter, weapons, in while zombies hunt and infect humans and military units attempt to control the outbreak. Without direct player control, the interactions between agents can create unexpected outcomes such as large outbreaks or naturally formed safe zones.
+Git Wreckers is a 2D Java simulation of a community responding to a zombie outbreak. Humans seek food and shelter, zombies hunt humans, and military units patrol and shoot zombies.
 
 ## Project Concepts
-- **Zombies** pursue nearby humans and infect on contact
-- **Humans** move, flee, seek shelter, and consume food or find a guns to protect themselves
+- **Zombies** pursue nearby humans and remove them from the simulation on contact
+- **Humans** move, seek shelter, and consume food to maintain their energy
 - **Military** patrol and can kill zombies
 - Behaviour emerges from local agent interactions
-- **No player input.** Every agent follows simple local rules, so the outbreak curve and the formation of safe zones emerge from the interactions themselves
+- Keyboard controls start, pause, reset, and adjust simulation speed
 
 ## Features
 - World Stimulation
@@ -38,8 +38,8 @@ Use the agreed division:
 
 ## Rules 
 - Zombies chase nearby humans.
-- Humans attempt to survive by moving, finding food, and seeking shelter, or having a gun to protect themselves.
-- Zombies infect humans when they catch them.
+- Humans attempt to survive by moving, finding food, and seeking shelter.
+- Zombies remove humans from the simulation when they catch them.
 - Military units patrol and shoot zombies.
 - The simulation progresses automatically through repeated ticks.
 - Population changes are caused by interactions between entities.
@@ -68,7 +68,7 @@ java -cp "out;src" Main
 On macOS or Linux, use a colon instead of a semicolon: `java -cp "out:src" Main`.
 The `src` entry makes the PNG image assets available at runtime.
 
-4. Make sure already have image folder and check the version
+4. Check the Java version if needed.
 ```bash 
 java -version
 javac -version
@@ -76,4 +76,4 @@ javac -version
 
 ## References
 - COMP2000 course materials
-- Image sources, references, etc (MUST FILLED)
+- Image assets supplied with the project and COMP2000 course materials
