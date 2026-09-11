@@ -8,6 +8,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Main {
@@ -142,8 +143,8 @@ public class Main {
 
         for (int index = 0; index < settings.getMilitaryCount(); index++) {
             world.addEntity(new Military(
-                    getSpawnCoordinate(index, 211, world.getWidth()),
-                    getSpawnCoordinate(index, 97, world.getHeight())
+                    getRandomSpawnCoordinate(world.getWidth()),
+                    getRandomSpawnCoordinate(world.getHeight())
             ));
         }
 
@@ -161,5 +162,9 @@ public class Main {
             int dimension
     ) {
         return 80 + (index * step) % (dimension - 160);
+    }
+
+    private static double getRandomSpawnCoordinate(int dimension) {
+        return ThreadLocalRandom.current().nextDouble(80, dimension - 80);
     }
 }
