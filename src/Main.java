@@ -108,18 +108,24 @@ public class Main {
         frame.setResizable(false);
         frame.setVisible(true);
 
-        Timer timer = new Timer(100, null);
-        timer.addActionListener(event -> {
-            if (timer.getDelay() != simPanel.getTimerDelay()) {
-                timer.setDelay(simPanel.getTimerDelay());
+        // Keep game updates at the existing speed.
+        Timer updateTimer = new Timer(simPanel.getTimerDelay(), null);
+        updateTimer.addActionListener(event -> {
+            int delay = simPanel.getTimerDelay();
+            if (updateTimer.getDelay() != delay) {
+                updateTimer.setDelay(delay);
             }
+
             if (simPanel.isRunning()) {
                 world.update();
-                simPanel.repaint();
             }
         });
 
-        timer.start();
+        // Draw independently at approximately 60 FPS.
+        Timer renderTimer = new Timer(17, event -> simPanel.repaint());
+
+        updateTimer.start();
+        renderTimer.start();
     }
 
     private static void populateWorld(
