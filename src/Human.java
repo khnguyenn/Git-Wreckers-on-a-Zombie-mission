@@ -150,15 +150,14 @@ public class Human extends Entity {
             }
         }
 
-        Food food = findNearestFood(world);
-        if (food == null) {
+        try {
+            Food food = findNearestFood(world);
+            moveTowards(food.getX(), food.getY(), world);
+            if (distanceTo(food) <= Food.EAT_DISTANCE) {
+                eat(food);
+            }
+        } catch (TargetNotFoundException exception) {
             wander(world);
-            return;
-        }
-
-        moveTowards(food.getX(), food.getY(), world);
-        if (distanceTo(food) <= Food.EAT_DISTANCE) {
-            eat(food);
         }
     }
 
@@ -173,12 +172,21 @@ public class Human extends Entity {
         return true;
     }
 
-    private Food findNearestFood(World world) {
-        return world.getNearby(this, FOOD_SEARCH_RADIUS).stream()
-                .filter(entity -> entity instanceof Food)
-                .map(entity -> (Food) entity)
+    private Food findNearestFood(World world) throws TargetNotFoundException {
+        return findNearestEntity(world, FOOD_SEARCH_RADIUS, Food.class);
+    }
+
+    private <T extends Entity> T findNearestEntity(World world,
+                                                  double radius,
+                                                  Class<T> entityType)
+            throws TargetNotFoundException {
+        return world.getNearby(this, radius).stream()
+                .filter(entityType::isInstance)
+                .map(entityType::cast)
                 .min(Comparator.comparingDouble(this::distanceTo))
-                .orElse(null);
+                .orElseThrow(() -> new TargetNotFoundException(
+                        "No nearby " + entityType.getSimpleName() + " target found"
+                ));
     }
 
     private Building findNearestAvailableBuilding(World world) {
@@ -246,9 +254,9 @@ public class Human extends Entity {
         // When Java is run with only the generated out directory on its
         // classpath, image assets remain in src rather than being duplicated.
         String fileName = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
-        File sourceAsset = new File("src/assets", fileName);
+        File sourceAsset = new File("src", fileName);
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src/assets", fileName);
+            sourceAsset = new File("COMP2000/src", fileName);
         }
         if (!sourceAsset.isFile()) {
             throw new IllegalStateException(imagePath + " was not found");

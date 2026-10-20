@@ -1,9 +1,12 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
@@ -39,19 +42,36 @@ public class Zombie extends Entity {
     public Zombie(double x, double y) {
         super(x, y);
 
-        frontWalkFrames = new Image[]{
-                loadImage("/assets/ZombieFrontWalk2.png"),
-                loadImage("/assets/ZombieFrontWalk3.png")
-        };
-
-        sideWalkFrames = new Image[]{
-                loadImage("/assets/ZombieWalk1.png"),
-                loadImage("/assets/ZombieWalk2.png")
-        };
-
-        frontIdleFrame = loadImage("/assets/ZombieFrontIdle.png");
-        sideIdleFrame = loadImage("/assets/ZombieSideIdle.png");
-        backFrame = loadImage("/assets/ZombieBack.png");
+        BufferedImage sheet = loadSpriteSheet();
+        if (sheet != null) {
+            int frameWidth = sheet.getWidth() / 5;
+            int frameHeight = sheet.getHeight() / 2;
+            frontIdleFrame = sheet.getSubimage(0, 0, frameWidth, frameHeight);
+            frontWalkFrames = new Image[4];
+            sideWalkFrames = new Image[4];
+            for (int index = 0; index < 4; index++) {
+                frontWalkFrames[index] = sheet.getSubimage(
+                        (index + 1) * frameWidth, 0, frameWidth, frameHeight);
+                sideWalkFrames[index] = sheet.getSubimage(
+                        index * frameWidth, frameHeight, frameWidth, frameHeight);
+            }
+            sideIdleFrame = sideWalkFrames[0];
+            backFrame = sheet.getSubimage(
+                    4 * frameWidth, frameHeight, frameWidth, frameHeight);
+        } else {
+            // Keep the fork's individual sprites usable without the team sheet.
+            frontWalkFrames = new Image[]{
+                    loadImage("/assets/ZombieFrontWalk2.png"),
+                    loadImage("/assets/ZombieFrontWalk3.png")
+            };
+            sideWalkFrames = new Image[]{
+                    loadImage("/assets/ZombieWalk1.png"),
+                    loadImage("/assets/ZombieWalk2.png")
+            };
+            frontIdleFrame = loadImage("/assets/ZombieFrontIdle.png");
+            sideIdleFrame = loadImage("/assets/ZombieSideIdle.png");
+            backFrame = loadImage("/assets/ZombieBack.png");
+        }
         walkFrame = 0;
         chooseNewWanderDirection();
     }
@@ -195,6 +215,24 @@ public class Zombie extends Entity {
 
     // ---- sprites -------------------------------------------------
 
+    private BufferedImage loadSpriteSheet() {
+        try {
+            URL resource = Zombie.class.getResource("/assets/ZombieSprites.png");
+            File sourceFile = new File("src/assets", "ZombieSprites.png");
+            if (!sourceFile.isFile()) {
+                sourceFile = new File("COMP2000/src/assets", "ZombieSprites.png");
+            }
+            BufferedImage sheet = resource != null ? ImageIO.read(resource)
+                    : sourceFile.isFile() ? ImageIO.read(sourceFile) : null;
+            if (sheet != null && sheet.getWidth() >= 5 && sheet.getHeight() >= 2) {
+                return sheet;
+            }
+        } catch (IOException exception) {
+            // Fall back to the original sprites if the optional sheet cannot load.
+        }
+        return null;
+    }
+
     private Image loadImage(String imagePath) {
         URL imageUrl =
                 Zombie.class.getResource(imagePath);
@@ -207,10 +245,10 @@ public class Zombie extends Entity {
                 ? imagePath.substring(1)
                 : imagePath;
 
-        File sourceAsset = new File("src/assets", fileName);
+        File sourceAsset = new File("src", fileName);
 
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src/assets", fileName);
+            sourceAsset = new File("COMP2000/src", fileName);
         }
 
         if (!sourceAsset.isFile()) {
