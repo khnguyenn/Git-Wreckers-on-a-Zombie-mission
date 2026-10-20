@@ -22,21 +22,6 @@ Git Wreckers is a 2D Java simulation of a community responding to a zombie outbr
 - Start, pause, reset, and speed controls
 - Configurable initial populations and random starting positions
 
-## Fork and team changes
-
-This fork keeps the root-level Java layout, population settings, random starting
-positions, reset settings and separate update/render timers. Team changes are
-adapted from upstream commit `7e6abeb`: generic food-target search, checked
-no-target handling, source asset loading and Human/Food tests.
-
-Zombies use the team's sprite sheet when it is available and fall back to the
-fork's original individual images. Target selection, shelter protection,
-infection and military behaviour keep the fork's existing rules.
-
-See [the integration notes](docs/upstream-sync.md) for the source commits and
-preserved behaviour. This is a selective integration, not a merge of upstream
-history.
-
 ## Class Structures
 
 [View the UML diagram](https://drive.google.com/file/d/1-3FDkD7lQL_UJ8YTpuyqcfL1BkNXXclc/view?usp=sharing)
