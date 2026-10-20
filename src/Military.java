@@ -277,9 +277,9 @@ public class Military extends Human {
         // When Java is run with only the generated out directory on its
         // classpath, image assets remain in src rather than being duplicated.
         String fileName = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
-        File sourceAsset = new File("src/assets", fileName);
+        File sourceAsset = new File("src", fileName);
         if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src/assets", fileName);
+            sourceAsset = new File("COMP2000/src", fileName);
         }
         if (!sourceAsset.isFile()) {
             throw new IllegalStateException(imagePath + " was not found");

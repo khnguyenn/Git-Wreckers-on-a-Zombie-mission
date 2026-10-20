@@ -11,7 +11,7 @@ Git Wreckers is a 2D Java simulation of a community responding to a zombie outbr
 - Keyboard controls start, pause, reset, and adjust simulation speed
 
 ## Features
-- World Stimulation
+- World simulation
 - Tick Loop
 - Human movement and survival
 - Zombie infection and chasing
@@ -20,6 +20,22 @@ Git Wreckers is a 2D Java simulation of a community responding to a zombie outbr
 - Food/resources
 - Population statistics
 - Start, pause, reset, and speed controls
+- Configurable initial populations and random starting positions
+
+## Fork and team changes
+
+This fork keeps the root-level Java layout, population settings, random starting
+positions, reset settings and separate update/render timers. Team changes are
+adapted from upstream commit `7e6abeb`: generic food-target search, checked
+no-target handling, source asset loading and Human/Food tests.
+
+Zombies use the team's sprite sheet when it is available and fall back to the
+fork's original individual images. Target selection, shelter protection,
+infection and military behaviour keep the fork's existing rules.
+
+See [the integration notes](docs/upstream-sync.md) for the source commits and
+preserved behaviour. This is a selective integration, not a merge of upstream
+history.
 
 ## Class Structures
 
@@ -31,8 +47,8 @@ Use the agreed division:
 | Area | Responsibility | Member | Student ID |
 |---|---|---|---|
 | World/Main | Tick loop, spawning, and neighbour queries | Tran Khoi Nguyen (Kian) Nguyen| 48769266 |
-| Human/Food | Energy, starvation, fleeing, and shelter | | |
-| Zombie | Infection, chasing, and target selection | | |
+| Human/Food | Energy, starvation, food consumption, and shelter | Abir Maya Bhowmick | 49125761 |
+| Zombie | Infection, chasing, and target selection | Nicholas Fang | |
 | Military/MovementBehaviour | Patrol, shooting, and strategy pattern | Neev Patel | 48521558 |
 | Building/SimPanel | Occupancy, rendering, and statistics | | |
 
@@ -77,3 +93,16 @@ javac -version
 ## References
 - COMP2000 course materials
 - Image assets supplied with the project and COMP2000 course materials
+
+## Tests
+
+CI compiles against the documented Java 11 baseline and runs every `test/*Test.java`
+entry point with assertions enabled. It also checks startup asset loading without
+`src` on the classpath and the original zombie images without the optional sheet.
+
+To run one focused test after compiling the source, for example:
+
+```bash
+javac --release 11 -cp out -d out test/HumanFoodTest.java
+java -ea -Djava.awt.headless=true -cp "out:src" HumanFoodTest
+```

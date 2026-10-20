@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +37,20 @@ public class SimPanel extends JPanel {
         URL backgroundURL =
                 SimPanel.class.getResource("/assets/Background.png");
 
-        if (backgroundURL == null) {
-            throw new IllegalStateException(
-                    "Background.png could not be found"
-            );
+        if (backgroundURL != null) {
+            backgroundImage = new ImageIcon(backgroundURL).getImage();
+        } else {
+            File sourceAsset = new File("src/assets", "Background.png");
+            if (!sourceAsset.isFile()) {
+                sourceAsset = new File("COMP2000/src/assets", "Background.png");
+            }
+            if (!sourceAsset.isFile()) {
+                throw new IllegalStateException(
+                        "Background.png could not be found"
+                );
+            }
+            backgroundImage = new ImageIcon(sourceAsset.getAbsolutePath()).getImage();
         }
-
-        backgroundImage = new ImageIcon(backgroundURL).getImage();
         setupKeyBindings();
     }
     private void setupKeyBindings() {

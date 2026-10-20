@@ -24,4 +24,29 @@ jobs:
       - name: Compile Java project
         run: |
           mkdir -p out
-          javac -d out src/*.java
+          javac --release 11 -d out src/*.java
+
+      - name: Compile and run tests
+        run: |
+          javac --release 11 -cp out -d out test/*.java
+          for test_file in test/*Test.java; do
+            test_class=$(basename "$test_file" .java)
+            java -ea -Djava.awt.headless=true -cp "out:src" "$test_class"
+          done
+
+      - name: Check source asset fallback
+        run: java -ea -Djava.awt.headless=true -cp out HumanFoodTest
+
+      - name: Check original zombie image fallback
+        run: |
+          legacy_root=$(mktemp -d)
+          mkdir -p "$legacy_root/src/assets"
+          for asset in src/assets/*.png; do
+            if [ "$(basename "$asset")" != "ZombieSprites.png" ]; then
+              cp "$asset" "$legacy_root/src/assets/"
+            fi
+          done
+          cd "$legacy_root"
+          java -ea -Djava.awt.headless=true -cp "$GITHUB_WORKSPACE/out" ForkSyncTest --legacy-images
+          printf 'not a PNG' > src/assets/ZombieSprites.png
+          java -ea -Djava.awt.headless=true -cp "$GITHUB_WORKSPACE/out" ForkSyncTest --legacy-images
