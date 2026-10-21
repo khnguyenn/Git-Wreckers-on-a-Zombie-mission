@@ -160,6 +160,7 @@ public class Main {
                     getRandomSpawnCoordinate(world.getHeight())
             ));
         }
+        world.publishStatistics();
     }
 
     private static double getRandomSpawnCoordinate(int dimension) {
