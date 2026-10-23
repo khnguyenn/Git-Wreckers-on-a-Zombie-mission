@@ -2,23 +2,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 public class World {
-
-    private static final int FOOD_SPAWN_INTERVAL_TICKS = 25;
-    private static final int HUMAN_SPAWN_INTERVAL_TICKS = 100;
-    private static final double FOOD_ENERGY_VALUE = 45.0;
 
     private final List<Entity> entities;
     private final int width;
     private final int height;
-    private final Random random;
+    private final SpawnPolicy spawnPolicy;
     private final List<WorldObserver> observers = new ArrayList<>();
     private boolean publishingStatistics;
     private long tick;
 
     public World(int width, int height) {
+        this(width, height, new PeriodicSpawnPolicy());
+    }
+
+    public World(int width, int height, SpawnPolicy spawnPolicy) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException(
                     "World dimensions must be positive"
@@ -28,7 +27,7 @@ public class World {
         this.width = width;
         this.height = height;
         this.entities = new ArrayList<>();
-        this.random = new Random();
+        this.spawnPolicy = Objects.requireNonNull(spawnPolicy, "Spawn policy cannot be null");
         this.tick = 0;
     }
 
@@ -148,7 +147,7 @@ public class World {
 
         removeInactiveEntities();
         tick++;
-        spawnEntities();
+        spawnPolicy.spawn(this, tick);
         publishStatistics();
     }
 
@@ -164,18 +163,4 @@ public class World {
         tick = 0;
     }
 
-    /** Adds food and humans at random locations at regular simulation intervals. */
-    private void spawnEntities() {
-        if (tick % FOOD_SPAWN_INTERVAL_TICKS == 0) {
-            addEntity(new Food(random.nextDouble() * width,
-                    random.nextDouble() * height, FOOD_ENERGY_VALUE));
-        }
-
-        if (tick % HUMAN_SPAWN_INTERVAL_TICKS == 0) {
-            addEntity(new Human(random.nextDouble() * width,
-                    random.nextDouble() * height));
-        }
-    }
-
-    
 }
