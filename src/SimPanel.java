@@ -11,6 +11,7 @@ public class SimPanel extends JPanel {
     private final World world;
     private final Image backgroundImage;
     private final Runnable resetAction;
+    private WorldStatistics statistics;
 
     private boolean started;
     private boolean paused;
@@ -27,6 +28,7 @@ public class SimPanel extends JPanel {
     public SimPanel(World world, Runnable resetAction) {
         this.world = Objects.requireNonNull(world);
         this.resetAction = Objects.requireNonNull(resetAction);
+        statistics = world.getStatistics();
         started = false;
         paused = false;
         speedLevel = 3;
@@ -53,6 +55,11 @@ public class SimPanel extends JPanel {
         }
         setupKeyBindings();
     }
+    public void setStatistics(WorldStatistics statistics) {
+        this.statistics = Objects.requireNonNull(statistics);
+        repaint();
+    }
+
     private void setupKeyBindings() {
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("pressed R"),
@@ -219,16 +226,16 @@ public class SimPanel extends JPanel {
                         textY
                 );
             }
-            int humanCount = countActiveEntitiesNamed("Human");
-            int zombieCount = countActiveEntitiesNamed("Zombie");
-            int militaryCount = countActiveEntitiesNamed("Military");
-            int foodCount = countActiveEntitiesNamed("Food");
+            long humanCount = statistics.getHumanCount();
+            long zombieCount = statistics.getZombieCount();
+            long militaryCount = statistics.getMilitaryCount();
+            long foodCount = statistics.getFoodCount();
 
             graphics2D.setColor(new Color(0, 0, 0, 170));
             graphics2D.fillRoundRect(15, 15, 220, 116, 12, 12);
 
             graphics2D.setColor(Color.WHITE);
-            graphics2D.drawString("Tick: " + world.getTick(), 25, 38);
+            graphics2D.drawString("Tick: " + statistics.getTick(), 25, 38);
             graphics2D.drawString("Humans: " + humanCount, 25, 58);
             graphics2D.drawString("Zombies: " + zombieCount, 25, 78);
             graphics2D.drawString("Military: " + militaryCount, 25, 98);
@@ -322,14 +329,4 @@ public class SimPanel extends JPanel {
         return matchingEntities;
     }
 
-    private int countActiveEntitiesNamed(String className) {
-        int count = 0;
-        for (Entity entity : world.getEntities()) {
-            if (entity.isActive()
-                    && entity.getClass().getSimpleName().equals(className)) {
-                count++;
-            }
-        }
-        return count;
-    }
 }

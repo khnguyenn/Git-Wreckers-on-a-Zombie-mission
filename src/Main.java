@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
+    private static final int POPULATION_HISTORY_CAPACITY = 500;
+
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
@@ -88,12 +90,8 @@ public class Main {
 
     private static void startSimulation(SimulationSettings settings) {
         World world = new World(1000,750);
-        populateWorld(world, settings);
-
-        SimPanel simPanel = new SimPanel(world, () -> {
-            world.reset();
-            populateWorld(world, settings);
-        });
+        PopulationHistory history = new PopulationHistory(POPULATION_HISTORY_CAPACITY);
+        SimPanel simPanel = createSimulationPanel(world, settings, history);
 
         JFrame frame =
                 new JFrame("Zombie Simulation");
@@ -126,6 +124,22 @@ public class Main {
 
         updateTimer.start();
         renderTimer.start();
+    }
+
+    private static SimPanel createSimulationPanel(
+            World world,
+            SimulationSettings settings,
+            PopulationHistory history
+    ) {
+        SimPanel panel = new SimPanel(world, () -> {
+            history.clear();
+            world.reset();
+            populateWorld(world, settings);
+        });
+        world.addObserver(panel::setStatistics);
+        world.addObserver(history);
+        populateWorld(world, settings);
+        return panel;
     }
 
     private static void populateWorld(
