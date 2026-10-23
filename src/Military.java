@@ -5,19 +5,19 @@ import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.ImageIcon;
 
 /**
- * A soldier that patrols the world and shoots zombies on sight.
+ * A soldier that wanders independently or follows a route and shoots zombies on sight.
  *
  * <p>A military unit is still a {@link Human} as far as the outbreak is
  * concerned, so a {@link Zombie} treats it as a person. Unlike an ordinary
  * human it does not starve, flee, or shelter in buildings. Its movement each
  * tick is delegated to a {@link MovementBehaviour} strategy that is swapped
- * between {@link PatrolBehaviour} and {@link HuntBehaviour} depending on
+ * between its own {@link WanderBehaviour} (or a supplied {@link PatrolBehaviour})
+ * and {@link HuntBehaviour} depending on
  * whether a zombie is within {@link #DETECTION_RADIUS}. The supplied front,
  * side, and back PNGs are chosen from the unit's current facing.
  */
@@ -32,7 +32,7 @@ public class Military extends Human {
     private static final int CHARACTER_HEIGHT = 54;
     private static final int TICKS_PER_WALK_FRAME = 8;
 
-    private final MovementBehaviour patrolBehaviour;
+    private final MovementBehaviour idleBehaviour;
     private final MovementBehaviour huntBehaviour;
     private MovementBehaviour currentBehaviour;
 
@@ -54,10 +54,14 @@ public class Military extends Human {
 
     /** Creates a unit that patrols the supplied route. */
     public Military(double x, double y, List<Point2D> patrolRoute) {
+        this(x, y, new PatrolBehaviour(patrolRoute));
+    }
+
+    private Military(double x, double y, MovementBehaviour idleBehaviour) {
         super(x, y);
-        this.patrolBehaviour = new PatrolBehaviour(patrolRoute);
+        this.idleBehaviour = idleBehaviour;
         this.huntBehaviour = new HuntBehaviour();
-        this.currentBehaviour = patrolBehaviour;
+        this.currentBehaviour = idleBehaviour;
 
         frontWalkFrames = new Image[]{
                 loadImage("/assets/MilitaryFrontWalk1.png"),
@@ -75,18 +79,9 @@ public class Military extends Human {
         backFrame = loadImage("/assets/MilitaryBack.png");
     }
 
-    /** Creates a unit that patrols a default box around its spawn point. */
+    /** Creates a unit with its own wandering direction and turn interval. */
     public Military(double x, double y) {
-        this(x, y, defaultRoute(x, y));
-    }
-
-    private static List<Point2D> defaultRoute(double x, double y) {
-        List<Point2D> route = new ArrayList<>();
-        route.add(new Point2D.Double(x - 160, y));
-        route.add(new Point2D.Double(x, y - 110));
-        route.add(new Point2D.Double(x + 160, y));
-        route.add(new Point2D.Double(x, y + 110));
-        return route;
+        this(x, y, new WanderBehaviour());
     }
 
     public Zombie getTarget() {
@@ -109,7 +104,7 @@ public class Military extends Human {
 
         moving = false;
         target = findNearestZombie(world);
-        currentBehaviour = (target == null) ? patrolBehaviour : huntBehaviour;
+        currentBehaviour = (target == null) ? idleBehaviour : huntBehaviour;
         currentBehaviour.move(this, world);
 
         if (fireCooldown > 0) {
@@ -122,7 +117,7 @@ public class Military extends Human {
         try {
             shoot();
         } catch (NoTargetException noTarget) {
-            // Nothing to shoot this tick; the unit simply keeps patrolling.
+            // Nothing to shoot this tick; the unit continues its selected movement.
         }
     }
 

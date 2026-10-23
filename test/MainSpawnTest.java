@@ -1,4 +1,5 @@
 import java.lang.reflect.Method;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +9,7 @@ public final class MainSpawnTest {
     private static final SimulationSettings SETTINGS = new SimulationSettings(4, 3, 2);
 
     public static void main(String[] args) throws Exception {
-        testExtremeStartsAllowMilitaryPatrolProgress();
+        testExtremeStartsAllowOptionalMilitaryPatrolProgress();
         testControlledInitialLayoutsRepeatAndVary();
         testStaticSceneAndInsertionOrderArePreserved();
         testResetPublishesSelectedPopulationOnce();
@@ -16,7 +17,7 @@ public final class MainSpawnTest {
         System.out.println("MainSpawnTest passed");
     }
 
-    private static void testExtremeStartsAllowMilitaryPatrolProgress() throws Exception {
+    private static void testExtremeStartsAllowOptionalMilitaryPatrolProgress() throws Exception {
         for (double value : new double[]{0.0, Math.nextDown(1.0)}) {
             World world = populated(SETTINGS, new FixedRandom(value));
             for (Entity entity : world.getEntities()) {
@@ -26,7 +27,9 @@ public final class MainSpawnTest {
                     double x = entity.getX();
                     double y = entity.getY();
                     if (entity instanceof Military) {
-                        Military military = (Military) entity;
+                        Military military = new Military(x, y, List.of(
+                                new Point2D.Double(x - 160, y), new Point2D.Double(x, y - 110),
+                                new Point2D.Double(x + 160, y), new Point2D.Double(x, y + 110)));
                         double initialY = military.getY();
                         World patrolWorld = new World(1000, 750);
                         patrolWorld.addEntity(military);
@@ -34,7 +37,7 @@ public final class MainSpawnTest {
                             military.update(patrolWorld);
                         }
                         check(Math.abs(military.getY() - initialY) > 10,
-                                "Edge spawns must let military progress past the first patrol waypoint");
+                                "Edge spawns must still support an explicitly supplied local patrol");
                     }
                     check(x >= marginX && x <= world.getWidth() - marginX
                                     && y >= marginY && y <= world.getHeight() - marginY,
