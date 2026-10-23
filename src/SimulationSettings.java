@@ -16,7 +16,8 @@ public final class SimulationSettings {
             );
         }
 
-        if (zombieCount > 2 * (humanCount + militaryCount)) {
+        long totalPeople = (long) humanCount + militaryCount;
+        if (zombieCount > 2L * totalPeople) {
             throw new IllegalArgumentException(
                     "Zombie count cannot exceed twice the human and military count"
             );

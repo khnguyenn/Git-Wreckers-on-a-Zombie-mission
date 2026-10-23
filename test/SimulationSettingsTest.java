@@ -4,6 +4,8 @@ public class SimulationSettingsTest {
         testValidPopulationIsAccepted();
         testTooManyZombiesAreRejected();
         testNegativePopulationIsRejected();
+        testLargeValidPopulationsDoNotOverflow();
+        testLargeRatioBoundaryIsEnforced();
 
         System.out.println("Simulation settings tests passed");
     }
@@ -27,6 +29,25 @@ public class SimulationSettingsTest {
     private static void testNegativePopulationIsRejected() {
         expectException(() -> new SimulationSettings(-1, 2, 1),
                 "Negative population counts should be rejected");
+    }
+
+    private static void testLargeValidPopulationsDoNotOverflow() {
+        SimulationSettings multiplied = new SimulationSettings(1 << 30, 0, Integer.MAX_VALUE);
+        check(multiplied.getZombieCount() == Integer.MAX_VALUE,
+                "Doubling a valid population must not overflow the ratio limit");
+        SimulationSettings added = new SimulationSettings(
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        check(added.getHumanCount() == Integer.MAX_VALUE
+                        && added.getMilitaryCount() == Integer.MAX_VALUE,
+                "Adding large civilian and military counts must retain their valid values");
+    }
+
+    private static void testLargeRatioBoundaryIsEnforced() {
+        SimulationSettings exact = new SimulationSettings(536_870_911, 536_870_912, Integer.MAX_VALUE - 1);
+        check(exact.getZombieCount() == Integer.MAX_VALUE - 1,
+                "A population exactly at the large ratio boundary should be accepted");
+        expectException(() -> new SimulationSettings(536_870_911, 536_870_912, Integer.MAX_VALUE),
+                "One zombie over the large ratio boundary should still be rejected");
     }
 
     private static void check(boolean condition, String message) {
