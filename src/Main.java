@@ -1,4 +1,5 @@
 import java.awt.GridLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,9 +25,9 @@ public class Main {
 
         SwingUtilities.invokeLater(() -> {
             try {
-                SimulationSettings settings = showSettingsDialog();
-                if (settings != null) {
-                    startSimulation(settings);
+                SimulationSetup setup = showSettingsDialog();
+                if (setup != null) {
+                    startSimulation(setup.settings, setup.spawnPolicy);
                 }
             } catch (IllegalStateException exception) {
                 JOptionPane.showMessageDialog(
@@ -40,15 +41,17 @@ public class Main {
         });
     }
 
-    private static SimulationSettings showSettingsDialog() {
+    private static SimulationSetup showSettingsDialog() {
         JSpinner humanSpinner = createCountSpinner(3);
         JSpinner militarySpinner = createCountSpinner(2);
         JSpinner zombieSpinner = createCountSpinner(1);
+        JCheckBox closedPopulation = new JCheckBox("Disable ongoing food and human arrivals");
 
         JPanel panel = new JPanel(new GridLayout(0, 2, 8, 8));
         addSetting(panel, "Humans:", humanSpinner);
         addSetting(panel, "Military:", militarySpinner);
         addSetting(panel, "Zombies:", zombieSpinner);
+        addSetting(panel, "Closed population:", closedPopulation);
 
         while (true) {
             int result = JOptionPane.showConfirmDialog(
@@ -64,11 +67,12 @@ public class Main {
             }
 
             try {
-                return new SimulationSettings(
+                SimulationSettings settings = new SimulationSettings(
                         (int) humanSpinner.getValue(),
                         (int) militarySpinner.getValue(),
                         (int) zombieSpinner.getValue()
                 );
+                return new SimulationSetup(settings, createSpawnPolicy(closedPopulation.isSelected()));
             } catch (IllegalArgumentException exception) {
                 JOptionPane.showMessageDialog(
                         null,
@@ -77,6 +81,20 @@ public class Main {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+        }
+    }
+
+    private static SpawnPolicy createSpawnPolicy(boolean closedPopulation) {
+        return closedPopulation ? (world, completedTick) -> { } : new PeriodicSpawnPolicy();
+    }
+
+    private static final class SimulationSetup {
+        private final SimulationSettings settings;
+        private final SpawnPolicy spawnPolicy;
+
+        private SimulationSetup(SimulationSettings settings, SpawnPolicy spawnPolicy) {
+            this.settings = settings;
+            this.spawnPolicy = spawnPolicy;
         }
     }
 
@@ -93,8 +111,8 @@ public class Main {
         panel.add(input);
     }
 
-    private static void startSimulation(SimulationSettings settings) {
-        World world = new World(1000,750);
+    private static void startSimulation(SimulationSettings settings, SpawnPolicy spawnPolicy) {
+        World world = new World(1000,750, spawnPolicy);
         PopulationHistory history = new PopulationHistory(POPULATION_HISTORY_CAPACITY);
         SimPanel simPanel = createSimulationPanel(world, settings, history);
 
