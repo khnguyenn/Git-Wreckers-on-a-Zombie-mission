@@ -7,6 +7,8 @@ public final class WorldTest {
     public static void main(String[] args) {
         testEntityStorageAndReadOnlyView();
         testNearbyBoundariesAndOrdering();
+        testNearbyResultsAreIndependentMutableLists();
+        testNearbySpecialRadiiAndDuplicateEntries();
         testTickAndInactiveEntities();
         testEntityDeactivatedBeforeItsTurnIsSkipped();
         testEntityAddedDuringUpdateWaitsForNextTick();
@@ -66,6 +68,41 @@ public final class WorldTest {
         active.deactivate();
         world.removeInactiveEntities();
         check(world.getEntities().isEmpty(), "Explicit inactive removal should retain no dead entities");
+    }
+
+    private static void testNearbyResultsAreIndependentMutableLists() {
+        World world = new World(100, 80);
+        CountingEntity source = new CountingEntity(10, 10);
+        CountingEntity neighbour = new CountingEntity(11, 10);
+        world.addEntity(neighbour);
+        List<Entity> result = world.getNearby(source, 5);
+        result.clear();
+        result.add(source);
+        check(world.getEntities().equals(List.of(neighbour)),
+                "Editing a query result must not change World storage");
+        List<Entity> snapshot = world.getNearby(source, 5);
+        world.reset();
+        check(snapshot.equals(List.of(neighbour)),
+                "Later World changes must not rewrite an existing query result");
+    }
+
+    private static void testNearbySpecialRadiiAndDuplicateEntries() {
+        World world = new World(100, 80);
+        CountingEntity source = new CountingEntity(10, 10);
+        CountingEntity coincident = new CountingEntity(10, 10);
+        CountingEntity far = new CountingEntity(90, 70);
+        world.addEntity(source);
+        world.addEntity(coincident);
+        world.addEntity(far);
+        world.addEntity(coincident);
+        check(world.getNearby(source, -0.0).equals(List.of(coincident, coincident)),
+                "Negative zero should include coincident entries without deduplicating them");
+        check(world.getNearby(source, Double.POSITIVE_INFINITY).equals(List.of(coincident, far, coincident)),
+                "An infinite radius should retain all active finite-distance entries in source order");
+        check(world.getNearby(source, Double.NaN).isEmpty(),
+                "NaN should retain the existing empty query result");
+        expectException(IllegalArgumentException.class,
+                () -> world.getNearby(source, Double.NEGATIVE_INFINITY));
     }
 
     private static void testEntityDeactivatedBeforeItsTurnIsSkipped() {

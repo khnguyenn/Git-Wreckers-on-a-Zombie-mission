@@ -1,3 +1,5 @@
+import static java.util.stream.Collectors.toCollection;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -118,23 +120,11 @@ public class World {
             );
         }
 
-        List<Entity> nearbyEntities = new ArrayList<>();
-
-        for (Entity entity : entities) {
-            if (entity == source) {
-                continue;
-            }
-
-            if (!entity.isActive()) {
-                continue;
-            }
-
-            if (source.distanceTo(entity) <= radius) {
-                nearbyEntities.add(entity);
-            }
-        }
-
-        return nearbyEntities;
+        return entities.stream()
+                .filter(entity -> entity != source)
+                .filter(Entity::isActive)
+                .filter(entity -> source.distanceTo(entity) <= radius)
+                .collect(toCollection(ArrayList::new));
     }
 
     public void update() {
