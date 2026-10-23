@@ -17,7 +17,7 @@ public class Main {
 
     private static final int POPULATION_HISTORY_CAPACITY = 500;
     private static final double AGENT_SPAWN_MARGIN = 80;
-    // Reserve the default patrol's 160/110-unit excursions and sprite clearance.
+    // Retain clearance for optional 160/110-unit patrol excursions and sprites.
     private static final double MILITARY_SPAWN_MARGIN_X = 180;
     private static final double MILITARY_SPAWN_MARGIN_Y = 140;
 
