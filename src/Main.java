@@ -8,12 +8,17 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Main {
 
     private static final int POPULATION_HISTORY_CAPACITY = 500;
+    private static final double AGENT_SPAWN_MARGIN = 80;
+    // Reserve the default patrol's 160/110-unit excursions and sprite clearance.
+    private static final double MILITARY_SPAWN_MARGIN_X = 180;
+    private static final double MILITARY_SPAWN_MARGIN_Y = 140;
 
     public static void main(String[] args) {
 
@@ -146,14 +151,22 @@ public class Main {
             World world,
             SimulationSettings settings
     ) {
+        populateWorld(world, settings, ThreadLocalRandom.current());
+    }
+
+    private static void populateWorld(
+            World world,
+            SimulationSettings settings,
+            Random random
+    ) {
         world.addEntity(new Building(155, 125, 150, 100));
         world.addEntity(new Building(580, 490, 150, 100));
 
         // Part B: people wander until they find and consume nearby food.
         for (int index = 0; index < settings.getHumanCount(); index++) {
             world.addEntity(new Human(
-                    getRandomSpawnCoordinate(world.getWidth()),
-                    getRandomSpawnCoordinate(world.getHeight())
+                    getRandomSpawnCoordinate(random, world.getWidth(), AGENT_SPAWN_MARGIN),
+                    getRandomSpawnCoordinate(random, world.getHeight(), AGENT_SPAWN_MARGIN)
             ));
         }
 
@@ -163,21 +176,21 @@ public class Main {
 
         for (int index = 0; index < settings.getMilitaryCount(); index++) {
             world.addEntity(new Military(
-                    getRandomSpawnCoordinate(world.getWidth()),
-                    getRandomSpawnCoordinate(world.getHeight())
+                    getRandomSpawnCoordinate(random, world.getWidth(), MILITARY_SPAWN_MARGIN_X),
+                    getRandomSpawnCoordinate(random, world.getHeight(), MILITARY_SPAWN_MARGIN_Y)
             ));
         }
 
         for (int index = 0; index < settings.getZombieCount(); index++) {
             world.addEntity(new Zombie(
-                    getRandomSpawnCoordinate(world.getWidth()),
-                    getRandomSpawnCoordinate(world.getHeight())
+                    getRandomSpawnCoordinate(random, world.getWidth(), AGENT_SPAWN_MARGIN),
+                    getRandomSpawnCoordinate(random, world.getHeight(), AGENT_SPAWN_MARGIN)
             ));
         }
         world.publishStatistics();
     }
 
-    private static double getRandomSpawnCoordinate(int dimension) {
-        return ThreadLocalRandom.current().nextDouble(80, dimension - 80);
+    private static double getRandomSpawnCoordinate(Random random, int dimension, double margin) {
+        return margin + random.nextDouble() * (dimension - 2 * margin);
     }
 }
