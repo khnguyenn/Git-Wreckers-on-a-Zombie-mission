@@ -1,9 +1,10 @@
+import static java.util.stream.Collectors.toCollection;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class World {
 
@@ -124,7 +125,7 @@ public class World {
                 .filter(entity -> entity != source)
                 .filter(Entity::isActive)
                 .filter(entity -> source.distanceTo(entity) <= radius)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(toCollection(ArrayList::new));
     }
 
     public void update() {
