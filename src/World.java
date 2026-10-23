@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class World {
 
@@ -119,23 +120,11 @@ public class World {
             );
         }
 
-        List<Entity> nearbyEntities = new ArrayList<>();
-
-        for (Entity entity : entities) {
-            if (entity == source) {
-                continue;
-            }
-
-            if (!entity.isActive()) {
-                continue;
-            }
-
-            if (source.distanceTo(entity) <= radius) {
-                nearbyEntities.add(entity);
-            }
-        }
-
-        return nearbyEntities;
+        return entities.stream()
+                .filter(entity -> entity != source)
+                .filter(Entity::isActive)
+                .filter(entity -> source.distanceTo(entity) <= radius)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void update() {
