@@ -10,24 +10,30 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.util.Random;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.OptionalDouble;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 
 public class Main {
 
     private static final int POPULATION_HISTORY_CAPACITY = 500;
+    private static final int REPORT_INTERVAL = 25;
     private static final double AGENT_SPAWN_MARGIN = 80;
     // Retain clearance for optional 160/110-unit patrol excursions and sprites.
     private static final double MILITARY_SPAWN_MARGIN_X = 180;
     private static final double MILITARY_SPAWN_MARGIN_Y = 140;
 
     public static void main(String[] args) {
-
+        boolean reportRequested = isReportRequested(args);
         SwingUtilities.invokeLater(() -> {
             try {
                 SimulationSetup setup = showSettingsDialog();
                 if (setup != null) {
-                    startSimulation(setup.settings, setup.spawnPolicy);
+                    startSimulation(setup.settings, setup.spawnPolicy, reportRequested);
                 }
             } catch (IllegalStateException exception) {
                 JOptionPane.showMessageDialog(
@@ -111,9 +117,41 @@ public class Main {
         panel.add(input);
     }
 
-    private static void startSimulation(SimulationSettings settings, SpawnPolicy spawnPolicy) {
+    static boolean isReportRequested(String[] args) {
+        return Arrays.stream(args).anyMatch("--report"::equals);
+    }
+
+    static void configureReporting(World world, boolean reportRequested, Consumer<String> reportSink) {
+        if (reportRequested) {
+            Objects.requireNonNull(reportSink, "reportSink");
+            world.addObserver(statistics -> {
+                if (statistics.getTick() % REPORT_INTERVAL == 0) {
+                    reportSink.accept(formatStatistics(statistics));
+                }
+            });
+        }
+    }
+
+    private static String formatStatistics(WorldStatistics statistics) {
+        return String.format(Locale.ROOT,
+                "tick=%d civilians=%d military=%d zombies=%d food=%d "
+                        + "meanEnergy=%s lowestEnergy=%s sheltered=%d",
+                statistics.getTick(), statistics.getHumanCount(), statistics.getMilitaryCount(),
+                statistics.getZombieCount(), statistics.getFoodCount(),
+                formatEnergy(statistics.getAverageCivilianEnergy()),
+                formatEnergy(statistics.getLowestCivilianEnergy()), statistics.getShelteredCivilianCount());
+    }
+
+    private static String formatEnergy(OptionalDouble energy) {
+        return energy.isPresent() ? String.format(Locale.ROOT, "%.1f", energy.getAsDouble()) : "n/a";
+    }
+
+    private static void startSimulation(SimulationSettings settings, SpawnPolicy spawnPolicy,
+                                        boolean reportRequested) {
         World world = new World(1000,750, spawnPolicy);
         PopulationHistory history = new PopulationHistory(POPULATION_HISTORY_CAPACITY);
+        // Subscribe before population so startup and resets share the existing publication.
+        configureReporting(world, reportRequested, System.out::println);
         SimPanel simPanel = createSimulationPanel(world, settings, history);
 
         JFrame frame =
