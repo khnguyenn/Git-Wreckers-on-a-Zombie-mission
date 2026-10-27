@@ -21,6 +21,19 @@ public final class ParallelFeedingTest {
         if (successes != 1 || gained != 1 || food.isActive()) {
             throw new AssertionError("One food item must feed exactly one human");
         }
+        if (ParallelFeeding.feed(List.of(), new Food(100, 100, 20)) != 0) {
+            throw new AssertionError("An empty batch must not consume food");
+        }
+        Food distant = new Food(500, 500, 20);
+        if (ParallelFeeding.feed(List.of(first), distant) != 0 || !distant.isActive()) {
+            throw new AssertionError("A distant human must not consume food");
+        }
+        try {
+            ParallelFeeding.feed(List.of(first, first), new Food(100, 100, 20));
+            throw new AssertionError("A human cannot be updated by two workers");
+        } catch (IllegalArgumentException expected) {
+            // Repeated references are rejected before any worker starts.
+        }
         System.out.println("ParallelFeedingTest passed");
     }
 

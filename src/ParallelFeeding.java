@@ -8,16 +8,20 @@ import java.util.Set;
 public final class ParallelFeeding {
     private ParallelFeeding() { }
 
-    /** Each human must occur once; callers must not update or render these entities during the batch. */
+    /**
+     * Each human must occur once. The caller must keep the entities out of all
+     * other updates, rendering and feeding batches until this batch returns.
+     */
     public static int feed(List<Human> humans, Food food) {
         Objects.requireNonNull(humans, "humans");
         Objects.requireNonNull(food, "food");
+        List<Human> batch = List.copyOf(humans);
         Set<Human> distinct = Collections.newSetFromMap(new IdentityHashMap<>());
-        for (Human human : humans) {
+        for (Human human : batch) {
             if (!distinct.add(Objects.requireNonNull(human, "human"))) {
                 throw new IllegalArgumentException("Each human must occur only once");
             }
         }
-        return humans.parallelStream().mapToInt(human -> human.eat(food) ? 1 : 0).sum();
+        return batch.parallelStream().mapToInt(human -> human.eat(food) ? 1 : 0).sum();
     }
 }

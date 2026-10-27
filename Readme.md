@@ -85,6 +85,18 @@ CI compiles against the documented Java 11 baseline and runs every `test/*Test.j
 entry point with assertions enabled. It also checks startup asset loading without
 `src` on the classpath and the original zombie images without the optional sheet.
 
+### Parallel feeding exercise
+
+`ParallelFeeding.feed(humans, food)` runs feeding attempts with a parallel stream
+and returns the number that succeeded. Run it only while the participating entities
+are idle: no world updates, rendering or other feeding batches may access them until
+the call returns. Each human must occur once. This is a separate batch operation;
+the normal Swing simulation continues to update entities sequentially.
+
+`ParallelFeedingTest` coordinates two workers to expose the original shared-food
+race. After the fix, the test expects exactly one human to gain energy. The test
+uses a timed barrier to force the old interleaving; it is not a performance benchmark.
+
 To run one focused test after compiling the source, for example:
 
 ```bash
