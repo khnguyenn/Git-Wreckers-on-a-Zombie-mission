@@ -163,13 +163,16 @@ public class Human extends Entity {
 
     /** Consumes an active food item when close enough to it. */
     public boolean eat(Food food) {
-        if (food == null || !food.isActive() || distanceTo(food) > Food.EAT_DISTANCE) {
+        if (food == null || distanceTo(food) > Food.EAT_DISTANCE) {
             return false;
         }
-
-        energy = Math.min(MAX_ENERGY, energy + food.getEnergyValue());
-        food.consume();
-        return true;
+        // All competing eaters lock the same food across the check and claim.
+        synchronized (food) {
+            if (!food.isActive()) return false;
+            energy = Math.min(MAX_ENERGY, energy + food.getEnergyValue());
+            food.consume();
+            return true;
+        }
     }
 
     private Food findNearestFood(World world) throws TargetNotFoundException {
