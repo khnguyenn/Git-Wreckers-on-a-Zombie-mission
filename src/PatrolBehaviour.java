@@ -19,19 +19,24 @@ public class PatrolBehaviour implements MovementBehaviour {
             throw new IllegalArgumentException(
                     "Patrol route must contain at least one waypoint");
         }
-        this.route = route;
+        this.route = route.stream()
+                .map(point -> (Point2D) new Point2D.Double(point.getX(), point.getY()))
+                .collect(java.util.stream.Collectors.toList());
         this.waypointIndex = 0;
     }
 
     @Override
     public void move(Military unit, World world) {
         Point2D waypoint = route.get(waypointIndex);
+        double startX = unit.getX();
+        double startY = unit.getY();
         unit.moveTowards(waypoint.getX(), waypoint.getY(), world);
 
         double distance = Math.hypot(
                 waypoint.getX() - unit.getX(),
                 waypoint.getY() - unit.getY());
-        if (distance <= ARRIVAL_DISTANCE) {
+        boolean blocked = unit.getX() == startX && unit.getY() == startY;
+        if (distance <= ARRIVAL_DISTANCE || blocked) {
             waypointIndex = (waypointIndex + 1) % route.size();
         }
     }

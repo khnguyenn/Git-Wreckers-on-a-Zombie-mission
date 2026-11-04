@@ -204,13 +204,14 @@ public class SimPanel extends JPanel {
 
             for (Building building : findEntities(Building.class)) {
                 String occupancyText =
-                        "Occupancy: "
+                        building.getAdmissionDescription() + " | Occupancy: "
                                 + building.getOccupantCount()
                                 + "/"
                                 + building.getCapacity();
 
                 int textX = (int) building.getX();
-                int textY = (int) building.getY() - 10;
+                // Keep policy labels clear of the dashboard above the first building.
+                int textY = (int) building.getEntranceY() + 18;
 
                 graphics2D.setColor(Color.BLACK);
                 graphics2D.drawString(

@@ -4,6 +4,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 public class Building extends Entity {
     private final Image image;
@@ -11,13 +12,20 @@ public class Building extends Entity {
     private final int height;
     private final int capacity;
     private int occupantCount;
+    private final AdmissionPolicy admissionPolicy;
 
     public Building(double x, double y, int width, int height) {
         this(x, y, width, height, 10);
     }
 
     public Building(double x, double y, int width, int height, int capacity) {
+        this(x, y, width, height, capacity, new OpenAdmissionPolicy());
+    }
+
+    public Building(double x, double y, int width, int height, int capacity,
+                    AdmissionPolicy admissionPolicy) {
         super(x, y);
+        this.admissionPolicy = Objects.requireNonNull(admissionPolicy, "Admission policy cannot be null");
         if (width > 0 && height > 0) {
             if (capacity <= 0) {
                 throw new IllegalArgumentException("Building capacity must be positive");
@@ -61,11 +69,16 @@ public class Building extends Entity {
     }
 
     public boolean canEnter() {
-        return !this.isFull();
+        return isActive() && !isFull();
+    }
+
+    public boolean canEnter(Human person) {
+        return person != null && person.isActive() && canEnter()
+                && admissionPolicy.allows(person, this);
     }
 
     public boolean enter() {
-        if (this.isFull()) {
+        if (!canEnter() || !admissionPolicy.allows(null, this)) {
             return false;
         } else {
             ++this.occupantCount;
@@ -80,6 +93,16 @@ public class Building extends Entity {
             --this.occupantCount;
             return true;
         }
+    }
+
+    public boolean enter(Human person) {
+        if (!canEnter(person)) return false;
+        occupantCount++;
+        return true;
+    }
+
+    public String getAdmissionDescription() {
+        return admissionPolicy.describe();
     }
 
     public boolean containsPoint(double pointX, double pointY) {
