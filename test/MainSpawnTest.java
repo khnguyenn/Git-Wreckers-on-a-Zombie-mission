@@ -14,6 +14,7 @@ public final class MainSpawnTest {
         testStaticSceneAndInsertionOrderArePreserved();
         testResetPublishesSelectedPopulationOnce();
         testZeroMobilePopulationIsPreserved();
+        testShelterPoliciesSurviveReset();
         System.out.println("MainSpawnTest passed");
     }
 
@@ -114,6 +115,26 @@ public final class MainSpawnTest {
         World world = new World(1000, 750);
         populate(world, settings, random);
         return world;
+    }
+
+    private static void testShelterPoliciesSurviveReset() throws Exception {
+        World world = populated(SETTINGS, new Random(7));
+        for (int round = 0; round < 2; round++) {
+            List<Building> buildings = world.getEntities().stream()
+                    .filter(Building.class::isInstance).map(Building.class::cast)
+                    .collect(java.util.stream.Collectors.toList());
+            Human healthy = new Human(500, 500);
+            check(buildings.get(0).getCapacity() == 10 && buildings.get(0).canEnter(healthy),
+                    "First building remains the open shelter");
+            Building emergency = buildings.get(1);
+            check(emergency.getCapacity() == 3 && healthy.enterBuilding(emergency),
+                    "Second building offers one general place");
+            check(!new Human(500, 500).enterBuilding(emergency)
+                            && emergency.getOccupantCount() == 1,
+                    "Its remaining two places stay reserved after startup or reset");
+            world.reset();
+            populate(world, SETTINGS, new Random(29));
+        }
     }
 
     private static void populate(World world, SimulationSettings settings, Random random) throws Exception {

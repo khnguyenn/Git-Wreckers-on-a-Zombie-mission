@@ -216,7 +216,8 @@ public class Main {
             Random random
     ) {
         world.addEntity(new Building(155, 125, 150, 100));
-        world.addEntity(new Building(580, 490, 150, 100));
+        world.addEntity(new Building(580, 490, 150, 100, 3,
+                new EmergencyAdmissionPolicy(2, 60)));
 
         // Part B: people wander until they find and consume nearby food.
         for (int index = 0; index < settings.getHumanCount(); index++) {

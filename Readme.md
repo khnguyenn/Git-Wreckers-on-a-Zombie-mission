@@ -21,6 +21,8 @@ Git Wreckers is a 2D Java simulation of a community responding to a zombie outbr
 - Population statistics
 - Start, pause, reset, and speed controls
 - Configurable initial populations and random starting positions
+- Military combat states, ammunition, reloads and earned weapon upgrades
+- Open and emergency shelter admission policies
 
 ## Class Structures
 

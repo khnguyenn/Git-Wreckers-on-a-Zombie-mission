@@ -89,7 +89,7 @@ public class Human extends Entity {
             return true;
         }
 
-        if (!building.enter()) {
+        if (!building.enter(this)) {
             return false;
         }
 
@@ -196,7 +196,7 @@ public class Human extends Entity {
         return world.getEntities().stream()
                 .filter(entity -> entity instanceof Building)
                 .map(entity -> (Building) entity)
-                .filter(Building::canEnter)
+                .filter(building -> building.canEnter(this))
                 .min(Comparator.comparingDouble(this::distanceTo))
                 .orElse(null);
     }
