@@ -26,9 +26,6 @@ Git Wreckers is a 2D Java simulation of a community responding to a zombie outbr
 
 ## Class Structures
 
-[Architecture decisions and demonstration guide](docs/architecture-integration.md)
-describes the integrated team patterns, alternatives, trade-offs and retained fork features.
-
 [View the UML diagram](https://drive.google.com/file/d/1-3FDkD7lQL_UJ8YTpuyqcfL1BkNXXclc/view?usp=sharing)
 
 ## Team Responsibilities
