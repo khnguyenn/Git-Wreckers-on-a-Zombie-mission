@@ -210,7 +210,8 @@ public class Main {
         populateWorld(world, settings, ThreadLocalRandom.current());
     }
 
-    private static void populateWorld(
+    // Shared initial scene for the GUI and headless spawning experiments.
+    static void populateWorld(
             World world,
             SimulationSettings settings,
             Random random
