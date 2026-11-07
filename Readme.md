@@ -105,3 +105,15 @@ To run one focused test after compiling the source, for example:
 javac --release 11 -cp out -d out test/HumanFoodTest.java
 java -ea -Djava.awt.headless=true -cp "out:src" HumanFoodTest
 ```
+
+### Spawning experiment
+
+After compiling, run `java -cp "out:src" SpawnExperiment 100 600 20261107 > trials.csv 2> summary.txt`
+to compare 100 trials per mode over 600 ticks with the default 3 civilians, 2 soldiers and 1 zombie.
+Optional trailing arguments select civilian, military and zombie counts. Use `;` in the classpath
+on Windows. The layout seed controls a random sequence of trial seeds. Each mode uses Main's
+initial scene and matching seeded starting positions for each comparison.
+Actor wandering remains unseeded, so repeated commands can produce different outcomes.
+The CSV distinguishes original survivors from later arrivals and leaves absent energy blank.
+Final snapshots include terminal-tick arrivals. Periodic mode changes food and immigration together,
+so the experiment compares those combined policies. Trials and entity updates run sequentially.
