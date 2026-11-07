@@ -49,19 +49,24 @@ public final class SpawnExperimentTest {
              PrintStream err = new PrintStream(summaries, true, "UTF-8")) {
             System.setOut(out);
             System.setErr(err);
-            SpawnExperiment.main(new String[]{"1", "100", "7", "0", "0", "0"});
+            SpawnExperiment.main(new String[]{"2", "100", "7", "0", "0", "0"});
         } finally {
             System.setOut(oldOut);
             System.setErr(oldErr);
         }
         String[] rows = csv.toString(StandardCharsets.UTF_8.name()).trim().split("\\R");
-        check(rows.length == 3 && rows[0].startsWith("trial,mode,layout_seed,ticks,"),
+        check(rows.length == 5 && rows[0].startsWith("trial,mode,layout_seed,ticks,"),
                 "CSV must contain a header and one row per mode and trial");
         String[] periodic = rows[1].split(",", -1);
         String[] closed = rows[2].split(",", -1);
         check(periodic[1].equals("periodic") && closed[1].equals("closed")
-                        && periodic[2].equals(closed[2]) && periodic[2].equals("7"),
+                        && periodic[2].equals(closed[2]),
                 "Each comparison must label both modes with the same initial-layout seed");
+        String[] secondPeriodic = rows[3].split(",", -1);
+        String[] secondClosed = rows[4].split(",", -1);
+        check(secondPeriodic[2].equals(secondClosed[2])
+                        && !secondPeriodic[2].equals(periodic[2]),
+                "The next comparison must use a new layout seed shared by its two modes");
         check(periodic[7].equals("1") && periodic[8].equals("0") && closed[7].equals("0"),
                 "Exported totals must distinguish immigrants from the original cohort");
         check(closed[12].isEmpty() && closed[13].isEmpty(),

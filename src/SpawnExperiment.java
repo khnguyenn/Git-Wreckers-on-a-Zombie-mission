@@ -28,7 +28,7 @@ public final class SpawnExperiment {
         }
         System.setProperty("java.awt.headless", "true");
         System.err.printf(Locale.ROOT,
-                "trials_per_mode=%d ticks=%d first_layout_seed=%d initial_civilians=%d "
+                "trials_per_mode=%d ticks=%d layout_seed_sequence=%d initial_civilians=%d "
                         + "initial_military=%d initial_zombies=%d%n",
                 trials, ticks, layoutSeed, settings.getHumanCount(),
                 settings.getMilitaryCount(), settings.getZombieCount());
@@ -41,8 +41,9 @@ public final class SpawnExperiment {
                 + "food,mean_civilian_energy,lowest_civilian_energy,sheltered_civilians");
         List<TrialResult> periodicResults = new ArrayList<>();
         List<TrialResult> closedResults = new ArrayList<>();
+        Random layoutSeeds = new Random(layoutSeed);
         for (int trial = 0; trial < trials; trial++) {
-            long seed = layoutSeed + trial;
+            long seed = layoutSeeds.nextLong();
             TrialResult periodic = runTrial(settings, ticks, seed, false);
             TrialResult closed = runTrial(settings, ticks, seed, true);
             periodicResults.add(periodic);
