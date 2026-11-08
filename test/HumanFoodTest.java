@@ -7,6 +7,7 @@ public final class HumanFoodTest {
         testEnergyDecreasesAfterUpdate();
         testInvalidFoodEnergyIsRejected();
         testEatingIncreasesEnergyAndConsumesFood();
+        testInactiveHumanCannotEat();
         testDistantFoodCannotBeEaten();
         testFoodExpiresAfter300Updates();
         testHumanEntersAndLeavesBuilding();
@@ -25,14 +26,18 @@ public final class HumanFoodTest {
     }
 
     private static void testInvalidFoodEnergyIsRejected() {
-        boolean rejected = false;
-        try {
-            new Food(0, 0, 0);
-        } catch (IllegalArgumentException exception) {
-            rejected = true;
+        double[] invalidValues = {0, -1, Double.NaN,
+                Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
+        for (double value : invalidValues) {
+            boolean rejected = false;
+            try {
+                new Food(0, 0, value);
+            } catch (IllegalArgumentException exception) {
+                rejected = true;
+            }
+            assert rejected : "Food must reject invalid energy: " + value;
         }
-
-        assert rejected;
+        assert new Food(0, 0, Double.MIN_VALUE).getEnergyValue() == Double.MIN_VALUE;
     }
 
     private static void testEatingIncreasesEnergyAndConsumesFood() {
@@ -52,6 +57,19 @@ public final class HumanFoodTest {
 
         assert !human.eat(food);
         assert food.isActive();
+    }
+
+    private static void testInactiveHumanCannotEat() {
+        Human human = new Human(100, 100);
+        human.update(new World(1000, 1000));
+        human.deactivate();
+        double energyBeforeEating = human.getEnergy();
+        Food food = new Food(100, 100, 20);
+
+        assert !human.eat(food) : "An inactive human must not eat";
+        assert human.getEnergy() == energyBeforeEating;
+        assert food.isActive();
+        assert !human.isActive();
     }
 
     private static void testFoodExpiresAfter300Updates() {

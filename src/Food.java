@@ -18,8 +18,8 @@ public class Food extends Entity {
     public Food(double x, double y, double energyValue) {
         super(x, y);
 
-        if (energyValue <= 0) {
-            throw new IllegalArgumentException("Food energy must be positive");
+        if (!Double.isFinite(energyValue) || energyValue <= 0) {
+            throw new IllegalArgumentException("Food energy must be finite and positive");
         }
 
         this.energyValue = energyValue;

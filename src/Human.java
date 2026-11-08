@@ -163,7 +163,7 @@ public class Human extends Entity {
 
     /** Consumes an active food item when close enough to it. */
     public boolean eat(Food food) {
-        if (food == null || distanceTo(food) > Food.EAT_DISTANCE) {
+        if (!isActive() || food == null || distanceTo(food) > Food.EAT_DISTANCE) {
             return false;
         }
         // All competing eaters lock the same food across the check and claim.
