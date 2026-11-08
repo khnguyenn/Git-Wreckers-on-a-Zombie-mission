@@ -1,0 +1,15 @@
+trials_per_mode=100 ticks=600 layout_seed_sequence=20261107 initial_civilians=3 initial_military=2 initial_zombies=1
+Initial positions are matched by layout seed. Entity wandering uses independent unseeded generators, so full runs are not exactly reproducible.
+Periodic mode changes both food supply and human arrivals. Final counts include arrivals on the terminal tick before their first update.
+mode=periodic trials=100 mean_final_civilians=8.13 mean_original_survivors=2.34 original_survival_pct=78.00 mean_final_zombies=0.09 pooled_final_civilian_energy=53.53
+mode=closed trials=100 mean_final_civilians=0.00 mean_original_survivors=0.00 original_survival_pct=0.00 mean_final_zombies=0.09 pooled_final_civilian_energy=n/a
+
+Evidence
+source_commit=e4dd22e160535060f025fe1642eb8d4c44d63f9c
+java_sources_sha256=9a358b69d7fa68252e13fbe3876cb51684f9243cb794d9176b6be48e99a409e8
+csv_sha256=caa6257302c56a98b808609798ef7dff053e708cdb953d7d75af6e01aa5cb373
+reproduction_compile=javac --release 11 -d out src/*.java
+reproduction_run=java -Djava.awt.headless=true -cp out:src SpawnExperiment 100 600 20261107 3 2 1
+validation=Full local test run passed before seed-sequence refinement; focused SpawnExperimentTest passed after refinement
+hosted_ci=passed at e4dd22e160535060f025fe1642eb8d4c44d63f9c
+hosted_ci_url=https://github.com/khnguyenn/Git-Wreckers-on-a-Zombie-mission/actions/runs/42371893362
