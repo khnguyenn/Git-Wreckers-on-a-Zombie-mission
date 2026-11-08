@@ -6,6 +6,7 @@ import java.util.concurrent.TimeoutException;
 
 public final class ParallelFeedingTest {
     public static void main(String[] args) throws Exception {
+        testInactiveParticipantCannotConsumeFood();
         Human first = new Human(100, 100);
         Human second = new Human(100, 100);
         World world = new World(1000, 750, (ignored, tick) -> { });
@@ -35,6 +36,28 @@ public final class ParallelFeedingTest {
             // Repeated references are rejected before any worker starts.
         }
         System.out.println("ParallelFeedingTest passed");
+    }
+
+    private static void testInactiveParticipantCannotConsumeFood() {
+        World world = new World(1000, 750, (ignored, tick) -> { });
+        Human inactive = new Human(100, 100);
+        inactive.update(world);
+        inactive.deactivate();
+        double energyBefore = inactive.getEnergy();
+        Food food = new Food(100, 100, 20);
+
+        assert ParallelFeeding.feed(List.of(inactive), food) == 0
+                : "An inactive participant must not count as a successful eater";
+        assert inactive.getEnergy() == energyBefore;
+        assert food.isActive();
+
+        Human active = new Human(100, 100);
+        active.update(world);
+        double activeEnergyBefore = active.getEnergy();
+        assert ParallelFeeding.feed(List.of(inactive, active), food) == 1;
+        assert active.getEnergy() > activeEnergyBefore;
+        assert inactive.getEnergy() == energyBefore;
+        assert !food.isActive();
     }
 
     /** Holds both workers after their active checks, exposing the unsafe interleaving. */
